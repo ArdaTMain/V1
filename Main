@@ -80,6 +80,5 @@ StarterGui:SetCore(
     {
         Title = "Credits",
         Text = "ArdaT V0.1 TEAM"
-        Duration = 5
     }
 )
