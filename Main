@@ -66,19 +66,3 @@ end
 for i, v in pairs(Unknown) do
     loadstring(game:HttpGet(v))()
 end
-
-StarterGui:SetCore(
-    "SendNotification",
-    {
-        Title = "ArdaT",
-        Text = "Version0.1",
-        Duration = 5
-    }
-)
-StarterGui:SetCore(
-    "SendNotification",
-    {
-        Title = "Credits",
-        Text = "ArdaT V0.1 TEAM"
-    }
-)
