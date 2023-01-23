@@ -1,0 +1,159 @@
+local Arsenal = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local TextLabel = Instance.new("TextLabel")
+local TextLabel_2 = Instance.new("TextLabel")
+local hitbox = Instance.new("TextButton")
+local silent = Instance.new("TextButton")
+local ESP = Instance.new("TextButton")
+
+Arsenal.Name = "Arsenal"
+Arsenal.Parent = game.CoreGui
+
+Frame.Parent = Arsenal
+Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Frame.BorderColor3 = Color3.fromRGB(234, 255, 0)
+Frame.BorderSizePixel = 2
+Frame.Position = UDim2.new(0.328801006, 0, 0.357429713, 0)
+Frame.Size = UDim2.new(0, 276, 0, 142)
+Frame.Active = true
+Frame.Draggable = true
+
+TextLabel.Parent = Frame
+TextLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel.BorderSizePixel = 0
+TextLabel.Size = UDim2.new(0, 276, 0, 22)
+TextLabel.Font = Enum.Font.SourceSans
+TextLabel.Text = "ArdaT  0.1"
+TextLabel.TextColor3 = Color3.fromRGB(229, 255, 0)
+TextLabel.TextSize = 14.000
+
+TextLabel_2.Parent = Frame
+TextLabel_2.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel_2.BorderSizePixel = 0
+TextLabel_2.Position = UDim2.new(0, 0, 0.845070422, 0)
+TextLabel_2.Size = UDim2.new(0, 276, 0, 22)
+TextLabel_2.Font = Enum.Font.SourceSans
+TextLabel_2.Text = "Detected Game:Arsenal"
+TextLabel_2.TextColor3 = Color3.fromRGB(229, 255, 0)
+TextLabel_2.TextSize = 14.000
+
+hitbox.Name = "hitbox"
+hitbox.Parent = Frame
+hitbox.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+hitbox.BorderColor3 = Color3.fromRGB(255, 255, 0)
+hitbox.Position = UDim2.new(0.0289855078, 0, 0.154929578, 0)
+hitbox.Size = UDim2.new(0, 87, 0, 55)
+hitbox.Font = Enum.Font.SourceSans
+hitbox.Text = "Hitbox Expander"
+hitbox.TextColor3 = Color3.fromRGB(242, 255, 0)
+hitbox.TextSize = 14.000
+hitbox.MouseButton1Down:Connect(function()
+	function getplrsname()
+		for i,v in pairs(game:GetChildren()) do
+			if v.ClassName == "Players" then
+				return v.Name
+			end
+		end
+	end
+	local players = getplrsname()
+	local plr = game[players].LocalPlayer
+	coroutine.resume(coroutine.create(function()
+		while  wait(1) do
+			coroutine.resume(coroutine.create(function()
+				for _,v in pairs(game[players]:GetPlayers()) do
+					if v.Name ~= plr.Name and v.Character then
+						v.Character.RightUpperLeg.CanCollide = false
+						v.Character.RightUpperLeg.Transparency = 10
+						v.Character.RightUpperLeg.Size = Vector3.new(13,13,13)
+
+						v.Character.LeftUpperLeg.CanCollide = false
+						v.Character.LeftUpperLeg.Transparency = 10
+						v.Character.LeftUpperLeg.Size = Vector3.new(13,13,13)
+
+						v.Character.HeadHB.CanCollide = false
+						v.Character.HeadHB.Transparency = 10
+						v.Character.HeadHB.Size = Vector3.new(13,13,13)
+
+						v.Character.HumanoidRootPart.CanCollide = false
+						v.Character.HumanoidRootPart.Transparency = 10
+						v.Character.HumanoidRootPart.Size = Vector3.new(13,13,13)
+
+					end
+				end
+			end))
+		end
+	end))
+end)
+
+silent.Name = "silent"
+silent.Parent = Frame
+silent.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+silent.BorderColor3 = Color3.fromRGB(255, 255, 0)
+silent.Position = UDim2.new(0.655797124, 0, 0.154929578, 0)
+silent.Size = UDim2.new(0, 87, 0, 55)
+silent.Font = Enum.Font.SourceSans
+silent.Text = "Silent Aim"
+silent.TextColor3 = Color3.fromRGB(242, 255, 0)
+silent.TextSize = 14.000
+silent.MouseButton1Down:Connect(function()
+	local CurrentCamera = workspace.CurrentCamera
+	local Players = game.GetService(game, "Players")
+	local LocalPlayer = Players.LocalPlayer
+	local Mouse = LocalPlayer:GetMouse()
+	function ClosestPlayer()
+		local MaxDist, Closest = math.huge
+		for I,V in pairs(Players.GetPlayers(Players)) do
+			if V == LocalPlayer then continue end
+			if V.Team == LocalPlayer then continue end
+			if not V.Character then continue end
+			local Head = V.Character.FindFirstChild(V.Character, "Head")
+			if not Head then continue end
+			local Pos, Vis = CurrentCamera.WorldToScreenPoint(CurrentCamera, Head.Position)
+			if not Vis then continue end
+			local MousePos, TheirPos = Vector2.new(Mouse.X, Mouse.Y), Vector2.new(Pos.X, Pos.Y)
+			local Dist = (TheirPos - MousePos).Magnitude
+			if Dist < MaxDist then
+				MaxDist = Dist
+				Closest = V
+				print("working")
+			end
+		end
+		return Closest
+	end
+	local MT = getrawmetatable(game)
+	local OldNC = MT.__namecall
+	local OldIDX = MT.__index
+	setreadonly(MT, false)
+	MT.__namecall = newcclosure(function(self, ...)
+		local Args, Method = {...}, getnamecallmethod()
+		if Method == "FindPartOnRayWithIgnoreList" and not checkcaller() then
+			local CP = ClosestPlayer()
+			if CP and CP.Character and CP.Character.FindFirstChild(CP.Character, "Head") then
+				Args[1] = Ray.new(CurrentCamera.CFrame.Position, (CP.Character.Head.Position - CurrentCamera.CFrame.Position).Unit * 1000)
+				return OldNC(self, unpack(Args))
+			end
+		end
+		return OldNC(self, ...)
+	end)
+	MT.__index = newcclosure(function(self, K)
+		if K == "Clips" then
+			return workspace.Map
+		end
+		return OldIDX(self, K)
+	end)
+	setreadonly(MT, true)
+end)
+
+ESP.Name = "ESP"
+ESP.Parent = Frame
+ESP.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+ESP.BorderColor3 = Color3.fromRGB(255, 255, 0)
+ESP.Position = UDim2.new(0.344202906, 0, 0.154929578, 0)
+ESP.Size = UDim2.new(0, 87, 0, 55)
+ESP.Font = Enum.Font.SourceSans
+ESP.Text = "Esp"
+ESP.TextColor3 = Color3.fromRGB(242, 255, 0)
+ESP.TextSize = 14.000
+ESP.MouseButton1Down:Connect(function()
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/ic3w0lf22/Unnamed-ESP/master/UnnamedESP.lua'))()
+end)
