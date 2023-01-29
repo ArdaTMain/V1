@@ -2,3 +2,6 @@ getgenv().Games = {
   [4991214437] = "https://raw.githubusercontent.com/ArdaTMain/V1/main/Town",
   [286090429] = "https://raw.githubusercontent.com/ArdaTMain/V1/main/Arsenal"      
 }
+getgenv().Unknown = {
+ "https://raw.githubusercontent.com/ArdaTMain/V1/main/Universal"
+}
