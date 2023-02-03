@@ -1,3 +1,2 @@
-game.Players.PlayerAdded:connect(function(player)
+local player = game.Players.LocalPlayer
 	player:Kick("ArdaT 0.1 Is Outdated.Please Wait Until We Update The Scripts.")
-	end)
